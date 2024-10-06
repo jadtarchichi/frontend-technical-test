@@ -11,7 +11,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { CaretDown, CaretUp, SignOut } from "@phosphor-icons/react";
 import { useAuthentication } from "../contexts/authentication";
-import { getUserById } from "../api";
+import { getUserById } from "../services/api/user";
 
 export const UserDropdown: React.FC = () => {
   const { state, signout } = useAuthentication();
@@ -19,7 +19,7 @@ export const UserDropdown: React.FC = () => {
     queryKey: ["user", state.isAuthenticated ? state.userId : "anon"],
     queryFn: () => {
       if (state.isAuthenticated) {
-        return getUserById(state.token, state.userId);
+        return getUserById(state.userId);
       }
       return null;
     },

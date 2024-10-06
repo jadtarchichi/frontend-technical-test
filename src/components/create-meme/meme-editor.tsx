@@ -1,14 +1,16 @@
 import { useDropzone } from "react-dropzone";
-import { MemePicture, MemePictureProps } from "./meme-picture";
+import { MemePicture } from "../common/meme-picture";
 import { AspectRatio, Box, Button, Flex, Icon, Text } from "@chakra-ui/react";
 import { Image, Pencil } from "@phosphor-icons/react";
+import { MemePictureProps, OnDragText } from "../../services/types/meme";
 
-export type MemeEditorProps = {
+type MemeEditorProps = {
   onDrop: (file: File) => void;
+  OnDragText?: OnDragText,
   memePicture?: MemePictureProps;
 };
 
-function renderNoPicture() {
+const renderNoPicture = () => {
   return (
     <Flex
       flexDir="column"
@@ -26,7 +28,7 @@ function renderNoPicture() {
   );
 }
 
-function renderMemePicture(memePicture: MemePictureProps, open: () => void) {
+const renderMemePicture = (memePicture: MemePictureProps, open: () => void, handleOnDragText?: OnDragText) => {
   return (
     <Box width="full" height="full" position="relative" __css={{
       "&:hover .change-picture-button": {
@@ -36,7 +38,7 @@ function renderMemePicture(memePicture: MemePictureProps, open: () => void) {
         display: "none",
       },
     }}>
-      <MemePicture {...memePicture} />
+      <MemePicture {...memePicture} OnDragText={handleOnDragText} />
       <Button
         className="change-picture-button"
         leftIcon={<Icon as={Pencil} boxSize={4} />}
@@ -57,6 +59,7 @@ function renderMemePicture(memePicture: MemePictureProps, open: () => void) {
 export const MemeEditor: React.FC<MemeEditorProps> = ({
   onDrop,
   memePicture,
+  OnDragText
 }) => {
   const { getRootProps, getInputProps, open } = useDropzone({
     onDrop: (files: File[]) => {
@@ -74,14 +77,13 @@ export const MemeEditor: React.FC<MemeEditorProps> = ({
       <Box
         {...getRootProps()}
         width="full"
-        position="relative"
         border={!memePicture ? "1px dashed" : undefined}
         borderColor="gray.300"
         borderRadius={9}
         px={1}
       >
         <input {...getInputProps()} />
-        {memePicture ? renderMemePicture(memePicture, open) : renderNoPicture()}
+        {memePicture ? renderMemePicture(memePicture, open, OnDragText) : renderNoPicture()}
       </Box>
     </AspectRatio>
   );

@@ -22,6 +22,7 @@ const memes = [
   {
     id: "dummy_meme_id_1",
     authorId: "dummy_user_id_1",
+    author: users["dummy_user_id_1"],
     pictureUrl: "https://dummy.url/meme/1",
     description: "dummy meme 1",
     commentsCount: 3,
@@ -38,6 +39,7 @@ const comments = [
     id: "dummy_comment_id_1",
     memeId: "dummy_meme_id_1",
     authorId: "dummy_user_id_1",
+    author: users["dummy_user_id_1"],
     content: "dummy comment 1",
     createdAt: "2021-09-01T12:00:00Z",
   },
@@ -45,6 +47,7 @@ const comments = [
     id: "dummy_comment_id_2",
     memeId: "dummy_meme_id_1",
     authorId: "dummy_user_id_2",
+    author: users["dummy_user_id_2"],
     content: "dummy comment 2",
     createdAt: "2021-09-01T12:00:00Z",
   },
@@ -52,10 +55,20 @@ const comments = [
     id: "dummy_comment_id_3",
     memeId: "dummy_meme_id_1",
     authorId: "dummy_user_id_3",
+    author: users["dummy_user_id_3"],
     content: "dummy comment 3",
     createdAt: "2021-09-01T12:00:00Z",
   },
 ]
+
+const newComment = {
+  id: "dummy_comment_id_4",
+  memeId: "dummy_meme_id_1",
+  authorId: "dummy_user_id_1",
+  author: users["dummy_user_id_1"],
+  content: "dummy comment 4",
+  createdAt: "2021-09-01T12:00:00Z",
+}
 
 export const handlers = [
   http.post<{}, { username: string; password: string }>(
@@ -75,6 +88,14 @@ export const handlers = [
       return new HttpResponse(null, {
         status: 401,
       });
+    },
+  ),
+  http.post<{ id: string }, { content: string }>(
+    "https://fetestapi.int.mozzaik365.net/api/memes/:id/comments",
+    async () => {
+      comments.push(newComment);
+
+      return HttpResponse.json(newComment);
     },
   ),
   http.get<{ id: string }>(

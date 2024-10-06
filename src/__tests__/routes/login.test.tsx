@@ -1,7 +1,6 @@
 import { vi } from "vitest";
 import { act, fireEvent, waitFor, screen } from "@testing-library/react";
 import { renderWithRouter } from "../utils";
-import { LoginPage } from "../../routes/login";
 import {
   AuthenticationContext,
   AuthenticationState,
@@ -9,6 +8,7 @@ import {
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ChakraProvider } from "@chakra-ui/react";
 import { ListenerFn, RouterEvents } from "@tanstack/react-router";
+import { LoginPage } from "../../pages/login";
 
 type RenderLoginPageParams = {
   authenticate?: (token: string) => void;
@@ -20,9 +20,9 @@ type RenderLoginPageParams = {
 describe("routes/login", () => {
   describe("LoginPage", () => {
     function renderLoginPage({
-      authenticate = () => {},
+      authenticate = () => { },
       authState = { isAuthenticated: false },
-      onNavigate = () => {},
+      onNavigate = () => { },
       currentPath = "/login",
     }: RenderLoginPageParams = {}) {
       return renderWithRouter({
@@ -36,7 +36,7 @@ describe("routes/login", () => {
                 value={{
                   state: authState,
                   authenticate,
-                  signout: () => {},
+                  signout: () => { },
                 }}
               >
                 {children}

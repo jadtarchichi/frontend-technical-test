@@ -1,15 +1,7 @@
 import { Box, Text, useDimensions } from "@chakra-ui/react";
 import { useMemo, useRef } from "react";
-
-export type MemePictureProps = {
-  pictureUrl: string;
-  texts: {
-    content: string;
-    x: number;
-    y: number;
-  }[];
-  dataTestId?: string;
-};
+import { MemePictureProps } from "../../services/types/meme";
+import { Moveable } from "./moveable";
 
 const REF_WIDTH = 800;
 const REF_HEIGHT = 450;
@@ -19,8 +11,10 @@ export const MemePicture: React.FC<MemePictureProps> = ({
   pictureUrl,
   texts: rawTexts,
   dataTestId = '',
+  OnDragText
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const textRefs = useRef<Array<HTMLParagraphElement>>([]);
   const dimensions = useDimensions(containerRef, true);
   const boxWidth = dimensions?.borderBox.width;
 
@@ -32,7 +26,7 @@ export const MemePicture: React.FC<MemePictureProps> = ({
     return {
       height: (boxWidth / REF_WIDTH) * REF_HEIGHT,
       fontSize: (boxWidth / REF_WIDTH) * REF_FONT_SIZE,
-      texts: rawTexts.map((text) => ({
+      texts: rawTexts?.map((text) => ({
         ...text,
         x: (boxWidth / REF_WIDTH) * text.x,
         y: (boxWidth / REF_WIDTH) * text.y,
@@ -55,24 +49,31 @@ export const MemePicture: React.FC<MemePictureProps> = ({
       borderRadius={8}
       data-testid={dataTestId}
     >
-      {texts.map((text, index) => (
-        <Text
-          key={index}
-          position="absolute"
-          left={text.x}
-          top={text.y}
-          fontSize={fontSize}
-          color="white"
-          fontFamily="Impact"
-          fontWeight="bold"
-          userSelect="none"
-          textTransform="uppercase"
-          style={{ WebkitTextStroke: "1px black" }}
-          data-testid={`${dataTestId}-text-${index}`}
-        >
-          {text.content}
-        </Text>
-      ))}
+      {
+        texts?.map((text, index) => {
+          return <div key={index}>
+            <Text
+              ref={(el: HTMLParagraphElement) => textRefs.current[index] = el}
+              position="absolute"
+              left={text.x}
+              top={text.y}
+              fontSize={fontSize}
+              color="white"
+              fontFamily="Impact"
+              fontWeight="bold"
+              userSelect="none"
+              textTransform="uppercase"
+              cursor={!!OnDragText ? "move" : ""}
+              style={{ WebkitTextStroke: "1px black" }}
+              data-testid={`${dataTestId}-text-${index}`}
+            >
+              {text.content}
+            </Text>
+
+            {!!OnDragText && <Moveable containerRef={containerRef} targetRef={textRefs.current[index]} OnDragEnd={(x, y) => OnDragText?.(index, x, y)} />}
+          </div>
+        })
+      }
     </Box>
   );
 };
